@@ -1,8 +1,8 @@
 // Sup Zar! how are u ?
 
 //selectors
-const randomButton = document.querySelector('.button');
-const arenas = document.querySelector('.arenas');
+const randomButton = document.querySelector('.button')
+const arenas = document.querySelector('.arenas')
 
 // events
 randomButton.addEventListener('click', () => {
@@ -51,10 +51,14 @@ function Fight(fighter1, fighter2) {
 }
 
 function changeHp(player) {
-    const playerLife = document.querySelector(`.player${player.numberPlayer} .life`);
-    player.hp -= Math.floor(Math.random() * 21)
-    player.hp < 0 ? player.hp = 0 : '';
-    playerLife.style.width = `${player.hp}%`;
+    player.hp = randomHit(player.hp)
+    const playerLife = document.querySelector(`.player${player.numberPlayer} .life`)
+    playerLife.style.width = `${player.hp}%`
+}
+
+function randomHit(hp) {
+    hp -= Math.floor(Math.random() * 21)
+    return hp < 0 ? 0 : hp
 }
 
 function playerWin(name) {
