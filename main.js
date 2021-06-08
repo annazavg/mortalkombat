@@ -1,13 +1,11 @@
 // Sup Zar! how are u ?
 
 //selectors
-const randomButton = document.querySelector('.button')
+const randomButton = document.querySelector('.control .button')
 const arenas = document.querySelector('.arenas')
 
 // events
-randomButton.addEventListener('click', () => {
-    Fight(scorpion, subZero)
-})
+randomButton.addEventListener('click', () => { Fight(scorpion, subZero) })
 
 // my godless class
 class Fighter {
@@ -20,7 +18,13 @@ class Fighter {
     )
     { Object.assign(this, {numberPlayer, name, hp, img, weapon}) }
     //methods
-    attack() { return console.log(`${this.name} Fight`) }
+    changeHP(hit) {
+        this.hp -= hit
+        this.hp = this.hp < 0 ? 0 : this.hp
+        this.renderHP()
+    }
+    elHP() { return document.querySelector(`.player${this.numberPlayer} .life`) }
+    renderHP() { this.elHP().style.width = `${this.hp}%` }
 }
 
 // class instances
@@ -42,29 +46,23 @@ const subZero = new Fighter(
 
 // functions
 function Fight(fighter1, fighter2) {
-    changeHp(fighter1)
-    changeHp(fighter2)
-    if (!fighter1.hp || !fighter2.hp ) {
-        fighter1.hp > fighter2.hp ? arenas.appendChild(playerWin(fighter1.name)) : arenas.appendChild(playerWin(fighter2.name)) //ugly but short
+    fighter1.changeHP(getRandom(20))
+    fighter2.changeHP(getRandom(20))
+    if (!fighter1.hp || !fighter2.hp ) { //ugly but short
+        fighter1.hp > fighter2.hp ? arenas.appendChild(playerWin(fighter1.name)) :
+            fighter1.hp < fighter2.hp ? arenas.appendChild(playerWin(fighter2.name)) :
+                arenas.appendChild(playerWin())
         randomButton.disabled = true
+        createReloadButton();
     }
 }
 
-function changeHp(player) {
-    player.hp = randomHit(player.hp)
-    const playerLife = document.querySelector(`.player${player.numberPlayer} .life`)
-    playerLife.style.width = `${player.hp}%`
-}
-
-function randomHit(hp) {
-    hp -= Math.floor(Math.random() * 21)
-    return hp < 0 ? 0 : hp
-}
+function getRandom(max) { return Math.floor(Math.random() * max + 1) }
 
 function playerWin(name) {
-    const winTitle = createElement('div', 'loseTitle')
-    winTitle.innerHTML = `${name} WIN`
-    return winTitle
+    const Title = createElement('div', 'loseTitle')
+    name ? Title.innerHTML = `${name} WIN` : Title.innerHTML = `DRAW`
+    return Title
 }
 
 function createElement(tag, className) {
@@ -72,6 +70,17 @@ function createElement(tag, className) {
     element.className = className
     return element
 }
+
+function createReloadButton () {
+    let div = createElement('div', `reloadWrap`)
+    div.innerHTML= `<button class="button">Restart</button>`
+    arenas.appendChild(div)
+    const resetButton = document.querySelector('.reloadWrap button')
+    resetButton.addEventListener('click', () => {
+        window.location.reload()
+    })
+}
+
 
 function createPlayer(objFighter) {
     let div = createElement('div', `player${objFighter.numberPlayer}`)
