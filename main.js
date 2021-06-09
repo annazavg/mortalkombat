@@ -5,7 +5,7 @@ const randomButton = document.querySelector('.control .button')
 const arenas = document.querySelector('.arenas')
 
 // events
-randomButton.addEventListener('click', () => { Fight(scorpion, subZero) })
+randomButton.addEventListener('click', () => { fight(scorpion, subZero) })
 
 // my godless class
 class Fighter {
@@ -21,7 +21,7 @@ class Fighter {
     changeHP(hit) {
         this.hp -= hit
         this.hp = this.hp < 0 ? 0 : this.hp
-        this.renderHP()
+        // this.renderHP()
     }
     elHP() { return document.querySelector(`.player${this.numberPlayer} .life`) }
     renderHP() { this.elHP().style.width = `${this.hp}%` }
@@ -45,9 +45,12 @@ const subZero = new Fighter(
 )
 
 // functions
-function Fight(fighter1, fighter2) {
+function fight(fighter1, fighter2) {
     fighter1.changeHP(getRandom(20))
+    fighter1.renderHP()
     fighter2.changeHP(getRandom(20))
+    fighter2.renderHP()
+    // this.renderHP()
     if (!fighter1.hp || !fighter2.hp ) { //ugly but short
         fighter1.hp > fighter2.hp ? arenas.appendChild(playerWin(fighter1.name)) :
             fighter1.hp < fighter2.hp ? arenas.appendChild(playerWin(fighter2.name)) :
