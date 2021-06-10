@@ -1,63 +1,99 @@
-// Sup Zar! how are u ?
+// bad and sad
 
 //selectors
-const randomButton = document.querySelector('.control .button')
 const arenas = document.querySelector('.arenas')
+const formFight = document.querySelector('.control')
+const fightButton = document.querySelector('.control .button')
 
-// events
-randomButton.addEventListener('click', () => { fight(scorpion, subZero) })
-
-// my godless class
-class Fighter {
-    constructor(
-        numberPlayer = 0,
-        name = '',
-        hp = 0,
-        img = '',
-        weapon = [''],
-    )
-    { Object.assign(this, {numberPlayer, name, hp, img, weapon}) }
-    //methods
-    changeHP(hit) {
-        this.hp -= hit
-        this.hp = this.hp < 0 ? 0 : this.hp
-        // this.renderHP()
-    }
-    elHP() { return document.querySelector(`.player${this.numberPlayer} .life`) }
-    renderHP() { this.elHP().style.width = `${this.hp}%` }
+//Constancia
+const HIT = {
+    head: 30,
+    body: 25,
+    foot: 20,
 }
 
-// class instances
-const scorpion = new Fighter(
-    1,
-    'Scorpion',
-    100,
-    'http://reactmarathon-api.herokuapp.com/assets/scorpion.gif',
-    ['fist', 'leg']
-)
+const ATTACK = ['head', 'body', 'foot'];
 
-const subZero = new Fighter(
-    2,
-    'Sub-Zero',
-    100,
-    'http://reactmarathon-api.herokuapp.com/assets/subzero.gif',
-    ['fist', 'leg']
-)
+//listeners
+formFight.addEventListener('submit', function (e) {
+    e.preventDefault()
+    const enemy = enemyAttack()
+    const attack = {};
 
-// functions
-function fight(fighter1, fighter2) {
-    fighter1.changeHP(getRandom(20))
-    fighter1.renderHP()
-    fighter2.changeHP(getRandom(20))
-    fighter2.renderHP()
-    // this.renderHP()
-    if (!fighter1.hp || !fighter2.hp ) { //ugly but short
-        fighter1.hp > fighter2.hp ? arenas.appendChild(playerWin(fighter1.name)) :
-            fighter1.hp < fighter2.hp ? arenas.appendChild(playerWin(fighter2.name)) :
+    for (let item of formFight) {
+        if (item.checked && item.name === 'hit') {
+            attack.value = getRandom(HIT[item.value])
+            attack.hit = item.value
+        }
+        if (item.checked && item.name === 'defence') {
+            attack.defence = item.value
+        }
+
+        item.checked = false;
+    }
+    console.log('####: attack', attack)
+    console.log('####: enemy', enemy)
+    if (enemy.hit !== attack.defence) {
+        player1.changeHP(enemy.value)
+        player1.renderHP()
+    }
+    if (attack.hit !== enemy.defence) {
+        player2.changeHP(attack.value)
+        player2.renderHP()
+    }
+
+    if (!player1.hp || !player2.hp ) { //ugly but short
+        player1.hp > player2.hp ? arenas.appendChild(playerWin(player1.name)) :
+            player1.hp < player2.hp ? arenas.appendChild(playerWin(player2.name)) :
                 arenas.appendChild(playerWin())
-        randomButton.disabled = true
+        fightButton.disabled = true
         createReloadButton();
     }
+})
+
+//bored obj players
+const player1 = {
+    numberPlayer: 1,
+    name: 'Scorpion',
+    hp: 100,
+    img: 'http://reactmarathon-api.herokuapp.com/assets/scorpion.gif',
+    weapon: ['fist', 'leg'],
+    elHP,
+    changeHP,
+    renderHP
+}
+
+const player2 = {
+    numberPlayer: 2,
+    name: 'Sub-Zero',
+    hp: 100,
+    img: 'http://reactmarathon-api.herokuapp.com/assets/subzero.gif',
+    weapon: ['ice','leg'],
+    elHP,
+    changeHP,
+    renderHP
+}
+
+// functions
+function enemyAttack() {
+    const hit = ATTACK[getRandom(3) - 1]
+    const defence = ATTACK[getRandom(3) - 1]
+    // console.log('####: hit', hit)
+    // console.log('####: defence', defence)
+    return {
+        value: getRandom(HIT[hit]),
+        hit,
+        defence
+    }
+}
+
+function elHP() { return document.querySelector(`.player${this.numberPlayer} .life`) }
+
+function renderHP() { this.elHP().style.width = `${this.hp}%` }
+
+function changeHP(hit) {
+    this.hp -= hit
+    this.hp = this.hp < 0 ? 0 : this.hp
 }
 
 function getRandom(max) { return Math.floor(Math.random() * max + 1) }
@@ -77,13 +113,11 @@ function createElement(tag, className) {
 function createReloadButton () {
     let div = createElement('div', `reloadWrap`)
     div.innerHTML= `<button class="button">Restart</button>`
-    arenas.appendChild(div)
-    const resetButton = document.querySelector('.reloadWrap button')
-    resetButton.addEventListener('click', () => {
+    div.addEventListener('click', () => {
         window.location.reload()
     })
+    arenas.appendChild(div)
 }
-
 
 function createPlayer(objFighter) {
     let div = createElement('div', `player${objFighter.numberPlayer}`)
@@ -100,5 +134,5 @@ function createPlayer(objFighter) {
 }
 
 // inject players
-arenas.appendChild(createPlayer(scorpion))
-arenas.appendChild(createPlayer(subZero))
+arenas.appendChild(createPlayer(player1))
+arenas.appendChild(createPlayer(player2))
