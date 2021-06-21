@@ -3,8 +3,8 @@ import {arenas} from "./selectors.js";
 
 class Player {
     constructor(props) {
-        const {numberPlayer, name, hp, img, weapon} = props
-        Object.assign(this, {numberPlayer, name, hp, img, weapon})
+        Object.assign(this, {...props})
+        console.log(this)
     }
     elHP() { return document.querySelector(`.player${this.numberPlayer} .life`)}
     renderHP() { this.elHP().style.width = `${this.hp}%` }
